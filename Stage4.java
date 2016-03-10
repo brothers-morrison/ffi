@@ -1,5 +1,4 @@
 
-/*
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.IntBuffer;
@@ -10,15 +9,13 @@ import com.nativelibs4java.mono.MonoLibrary.*;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.ptr.PointerByReference;
-*/
 
 public class Stage4 {
 	public static String blep(String foo) {
-		return foo;
-		/*
-		System.load("mono-2.0");
+//		System.loadLibrary("mono-2.0");
 		final MonoLibrary m = MonoLibrary.INSTANCE;
 		final MonoDomain dom = m.mono_jit_init("stage4");
+		/*
 		final MonoAssembly asm = m.mono_domain_assembly_open(dom, "stage5.exe");
 		MonoImage img = m.mono_assembly_get_image(asm);
 		MonoClass cls = m.mono_class_from_name(img, "stage5", "Stage5Runner");
@@ -34,5 +31,10 @@ public class Stage4 {
 		m.mono_jit_cleanup(dom);
 		return jrv;
 		*/
+		return foo;
+	}
+
+	public static void main(String args[]) {
+		System.out.println(blep(args[0]));
 	}
 }
