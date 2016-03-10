@@ -16,17 +16,13 @@ extern "C" const char *stage3_blep(Stage3 *st, char *foo) {
 }
 
 std::string Stage3::blep(std::string foo) {
-    JavaVM *jvm;
+    JavaVM *jvm = NULL;
     JNIEnv *env = NULL;
-    JavaVMInitArgs vmargs;
-    vmargs.version = JNI_VERSION_1_6;
-    vmargs.nOptions = 0;
-    vmargs.options = NULL;
-    vmargs.ignoreUnrecognized = false;
 
-    JNI_GetDefaultJavaVMInitArgs(&vmargs);
-    printf("%d\n", JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs));
-    printf("env %p\n", env);
+    JNI_GetCreatedJavaVMs(&jvm, 1, NULL);
+    jvm->AttachCurrentThread((void **)&env, NULL);
+
+
     jclass stage4 = env->FindClass("Stage4");
     jmethodID blep_id = env->GetStaticMethodID(stage4, "blep", "(Ljava/lang/String;)Ljava/lang/String;");
 
@@ -37,8 +33,7 @@ std::string Stage3::blep(std::string foo) {
     const char *rv = strdup(cfoo);
     env->ReleaseStringUTFChars(jfoo, cfoo);
 
-    jvm->DestroyJavaVM();
-
+    jvm->DetachCurrentThread();
     return rv;
 }
 
