@@ -17,17 +17,21 @@ extern "C" const char *stage3_blep(Stage3 *st, char *foo) {
 
 std::string Stage3::blep(std::string foo) {
     JavaVM *jvm;
-    JNIEnv *env;
+    JNIEnv *env = NULL;
     JavaVMInitArgs vmargs;
+    vmargs.version = JNI_VERSION_1_6;
+    vmargs.nOptions = 0;
+    vmargs.options = NULL;
+    vmargs.ignoreUnrecognized = false;
+
     JNI_GetDefaultJavaVMInitArgs(&vmargs);
-    JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs);
-    printf("foo\n");
+    printf("%d\n", JNI_CreateJavaVM(&jvm, (void**)&env, &vmargs));
+    printf("env %p\n", env);
     jclass stage4 = env->FindClass("Stage4");
-    printf("bar\n");
-    jmethodID blep_id = env->GetStaticMethodID(stage4, "blep", "(S)V");
+    jmethodID blep_id = env->GetStaticMethodID(stage4, "blep", "(Ljava/lang/String;)Ljava/lang/String;");
 
     jstring jfoo = env->NewStringUTF(foo.c_str());
-    jstring jres = static_cast<jstring>(env->CallStaticObjectMethod(stage4, blep_id, foo));
+    jstring jres = static_cast<jstring>(env->CallStaticObjectMethod(stage4, blep_id, jfoo));
     
     const char *cfoo = env->GetStringUTFChars(jres, 0);
     const char *rv = strdup(cfoo);

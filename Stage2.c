@@ -8,7 +8,8 @@ typedef void *Stage3_t;
 const char *stage2_blep(const char *foo) {
     void *handle = dlopen("./libstage3.so", RTLD_LAZY | RTLD_LOCAL);
 
-    printf("%p\n", handle);
+    if (!handle)
+        printf("Stage 3 dlopen error: %s\n", dlerror());
 
     Stage3_t *(*stage3_create)();
     void (*stage3_delete)(Stage3_t *);
