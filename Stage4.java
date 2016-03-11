@@ -15,7 +15,6 @@ public class Stage4 {
 //		System.loadLibrary("mono-2.0");
 		final MonoLibrary m = MonoLibrary.INSTANCE;
 		final MonoDomain dom = m.mono_jit_init("stage4");
-		/*
 		final MonoAssembly asm = m.mono_domain_assembly_open(dom, "stage5.exe");
 		MonoImage img = m.mono_assembly_get_image(asm);
 		MonoClass cls = m.mono_class_from_name(img, "stage5", "Stage5Runner");
@@ -25,13 +24,13 @@ public class Stage4 {
 		mem.setPointer(0, m.mono_string_new(dom, foo).object.getPointer());
 		PointerByReference pargs =  new PointerByReference();
 		pargs.setPointer(mem.share(0));
-		MonoObject rv = m.mono_runtime_invoke(met, null, pargs, (PointerByReference)null);
-		String jrv = m.mono_object_unbox(rv).getString(0);
+		MonoObject obj = m.mono_runtime_invoke(met, null, pargs, (PointerByReference)null);
+		MonoString rv = new MonoString();
+		rv.use(obj.getPointer());
+		String jrv = m.mono_string_to_utf8(rv).getPointer().getString(0);
 
 		m.mono_jit_cleanup(dom);
 		return jrv;
-		*/
-		return foo;
 	}
 
 	public static void main(String args[]) {
