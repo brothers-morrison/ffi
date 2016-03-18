@@ -12,7 +12,6 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class Stage4 {
 	public static String blep(String foo) {
-//		System.loadLibrary("mono-2.0");
 		final MonoLibrary m = MonoLibrary.INSTANCE;
 		final MonoDomain dom = m.mono_jit_init("stage4");
 		final MonoAssembly asm = m.mono_domain_assembly_open(dom, "stage5.exe");
