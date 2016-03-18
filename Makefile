@@ -2,7 +2,10 @@
 
 all: Stage1.class stage2 stage3
 
-stage5.exe: stage5.cs
+stage7.exe: stage7.vb
+	vbnc $<
+
+stage5.exe: stage5.cs stage7.exe
 	mcs $<
 
 Stage4.class: Stage4.java stage5.exe
