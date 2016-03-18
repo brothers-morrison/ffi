@@ -14,8 +14,6 @@ namespace stage5 {
             IntPtr pfoo = PyUnicode_FromString(foo);
             PyTuple_SetItem(args, 0, pfoo);
             IntPtr pres = PyObject_CallObject(func, args);
-//            IntPtr puni = PyUnicode_AsUnicode(pres);
-//            string  res = PyUnicode_AsUTF8String(PyObject_Str(pres));
             IntPtr bres = PyUnicode_AsUTF16String(pres);
             IntPtr sres = PyBytes_AsString(bres);
             string s = Marshal.PtrToStringUni(sres);
