@@ -1,0 +1,8 @@
+handle SIGSEGV nostop noprint pass
+set breakpoint pending on
+break PyObject_CallObject
+commands
+silent
+handle SIGSEGV nopass stop print
+cont
+end
