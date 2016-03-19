@@ -8,7 +8,12 @@ stage7.exe: stage7.vb
 stage5.exe: stage5.cs stage7.exe
 	mcs $<
 
-Stage4.class: Stage4.java stage5.exe
+stage5: stage5.exe stage7.exe
+	mkbundle --keeptemp stage5.exe -o stage5
+	#FIXME make this portable
+	gcc -ggdb -o stage5 -Wall -D_REENTRANT -I/usr/lib/pkgconfig/../../include/mono-2.0 -L/usr/lib/pkgconfig/../../lib -lmonosgen-2.0 -lm -lrt -ldl -lpthread temp.c temp.o
+
+Stage4.class: Stage4.java stage5.exe stage5
 	javac -cp ./nativelibs4java/libraries/Mono/Mono.jar $<
 
 

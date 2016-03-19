@@ -15,8 +15,10 @@ namespace stage5 {
             PyTuple_SetItem(args, 0, pfoo);
             IntPtr pres = PyObject_CallObject(func, args);
             IntPtr bres = PyUnicode_AsUTF16String(pres);
+            /* doing utf-16 on an utf-8 system? why not! */
+            long size = PyBytes_Size(bres);
             IntPtr sres = PyBytes_AsString(bres);
-            string s = Marshal.PtrToStringUni(sres);
+            string s = Marshal.PtrToStringUni(sres, (int)size/2);
             Py_Finalize();
             return s;
         }
@@ -47,6 +49,8 @@ namespace stage5 {
             public static extern IntPtr PyUnicode_AsUTF16String(IntPtr pstr);
         [DllImport("python3.5m")]
             public static extern IntPtr PyBytes_AsString(IntPtr pstr);
+        [DllImport("python3.5m")]
+            public static extern long PyBytes_Size(IntPtr pstr);
         [DllImport("python3.5m")]
             public static extern IntPtr PyUnicode_AsUnicode(IntPtr pstr);
         [DllImport("python3.5m")]
