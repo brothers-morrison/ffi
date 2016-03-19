@@ -4,22 +4,34 @@ Imports V8InterfaceThing
 
 Public Class Stage7Runner
     Public Shared Function blep(ByVal foo As String) As String
-        Dim ctx As IntPtr, js_rv As IntPtr, vb_rv As String
-        ctx = duk_create_heap (Nothing, Nothing, Nothing, Nothing, Nothing)
+        Dim jrv As IntPtr, glo As IntPtr, func As IntPtr, params As IntPtr, crv As IntPtr, vbrv As String
 
-        duk_push_string_file_raw (ctx, "stage8.js", 0)
-        duk_push_string (ctx, "stage8.js")
-        duk_eval_raw (ctx, Nothing, 0, 17)
+        JX_InitializeOnce(".")
+        JX_InitializeNewEngine()
+        JX_DefineMainFile("require('stage8.js')")
+        JX_StartEngine()
+        JX_Loop() ' startup
 
-        duk_get_global_string (ctx, "blep")
-        duk_push_string (ctx, foo)
-        duk_call (ctx, 1)
-        js_rv = duk_to_string (ctx, -1)
-        vb_rv = Marshal.PtrToStringAuto(js_rv)
+        params = Marshal.AllocCoTaskMem(40) ' sizeof(JXValue) == 40
+        jrv    = Marshal.AllocCoTaskMem(40)
+        glo    = Marshal.AllocCoTaskMem(40)
+        func   = Marshal.AllocCoTaskMem(40)
 
-        'duk_pop (ctx)
-        'duk_destroy_heap (ctx)
-        return vb_rv
+        JX_GetGlobalObject(glo)
+        JX_GetNamedProperty(glo, "blep", func)
+
+        JX_New(params)
+        JX_SetString(params, foo, Len(foo))
+
+        JX_CallFunction(func, params, 1, jrv)
+
+        crv  = JX_GetString(jrv)
+        vbrv = Marshal.PtrToStringAuto(crv)
+        ' free params, jrv, crv
+
+        'JX_Loop() ' teardown
+
+        return vbrv
     End Function
 End Class
 
@@ -31,25 +43,31 @@ Module Main
 End Module
 
 Public Class V8InterfaceThing
-    <DllImport("duktape")> Public Shared Function duk_create_heap(ByVal _a1 As IntPtr, ByVal _a1 As IntPtr, _
-            ByVal _a1 As IntPtr, ByVal _a1 As IntPtr, ByVal _a1 As IntPtr) As IntPtr
+    <DllImport("jx")> Public Shared Function JX_InitializeOnce(ByVal homedir As String) As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_push_string_file_raw(ByVal ctx As IntPtr, ByVal path As String,
-            ByVal flags As Integer) As IntPtr
+    <DllImport("jx")> Public Shared Function JX_InitializeNewEngine() As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_push_string(ByVal ctx As IntPtr, ByVal path As String) As IntPtr
+    <DllImport("jx")> Public Shared Function JX_DefineMainFile(ByVal code As String) As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_eval_raw(ByVal ctx As IntPtr, ByVal srcBuf As IntPtr, _
-            ByVal src_len As Integer, ByVal flags As Integer) As Object
+    <DllImport("jx")> Public Shared Function JX_StartEngine() As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_get_global_string(ByVal ctx As IntPtr, ByVal id As String) As Boolean
+    <DllImport("jx")> Public Shared Function JX_Loop() As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_call(ByVal ctx As IntPtr, ByVal args As Integer) As Object
+    <DllImport("jx")> Public Shared Function JX_Free(ByRef ptr As IntPtr) As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_to_string(ByVal ctx As IntPtr, ByVal idx As Integer) As IntPtr
+    <DllImport("jx")> Public Shared Function JX_New(ByRef ptr As IntPtr) As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_pop(ByVal ctx As IntPtr) As Object
+    <DllImport("jx")> Public Shared Function JX_SetString(ByRef s As IntPtr, ByVal v As String, ByVal l As Integer) _
+            As Object
     End Function
-    <DllImport("duktape")> Public Shared Function duk_destroy_heap(ByVal ctx As IntPtr) As Object
+    <DllImport("jx")> Public Shared Function JX_GetGlobalObject(ByRef obj As IntPtr) As Object
+    End Function
+    <DllImport("jx")> Public Shared Function JX_CallFunction(ByRef func As IntPtr, ByRef args As IntPtr, _
+            ByVal argc As Integer, ByRef retval As IntPtr) As Object
+    End Function
+    <DllImport("jx")> Public Shared Function JX_GetString(ByRef jxo As IntPtr) As IntPtr
+    End Function
+    <DllImport("jx")> Public Shared Function JX_GetNamedProperty(ByRef jxo As IntPtr, ByVal prop As String, _
+            ByRef out As IntPtr) As IntPtr
     End Function
 End Class
