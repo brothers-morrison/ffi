@@ -4,5 +4,6 @@ break PyObject_CallObject
 commands
 silent
 handle SIGSEGV nopass stop print
-cont
+continue
 end
+run
