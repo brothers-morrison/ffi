@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
 
 from ctypes import *
-import multiprocessing
 
 def blep(foo):
-#	pool = multiprocessing.Pool(1)
-	return foo
-
-def blep_run(foo):
-
-	mono = CDLL('./libmono.so')
+	mono = CDLL('libmonosgen-2.0.so.1')
 
 	mono.mono_jit_init.restype = c_void_p
 	mono.mono_domain_assembly_open.restype = c_void_p
@@ -20,8 +14,9 @@ def blep_run(foo):
 	mono.mono_object_to_string = c_void_p
 	mono.mono_string_new.restype = c_void_p
 	mono.mono_string_to_utf8.restype = c_char_p
+	mono.mono_get_root_domain.restype = c_void_p
 
-	dom = mono.mono_jit_init(b"stage6");
+	dom = mono.mono_get_root_domain();
 	asm = mono.mono_domain_assembly_open(dom, b"stage7.exe");
 	img = mono.mono_assembly_get_image(asm);
 	cls = mono.mono_class_from_name(img, b"", b"Stage7Runner");
@@ -31,7 +26,6 @@ def blep_run(foo):
 	mrv = mono.mono_runtime_invoke(met, None, byref(arg), None);
 	prv = mono.mono_string_to_utf8(mono.mono_object_to_string(mrv)).decode()
 
-	mono.mono_jit_cleanup(dom)
 	return prv;
 
 if __name__ == '__main__':
