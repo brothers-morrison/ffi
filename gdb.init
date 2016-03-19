@@ -6,4 +6,3 @@ silent
 handle SIGSEGV nopass stop print
 continue
 end
-run

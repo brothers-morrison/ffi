@@ -19,6 +19,8 @@ std::string Stage3::blep(std::string foo) {
     JavaVM *jvm = NULL;
     JNIEnv *env = NULL;
 
+    printf("Stage 3: %s\n", foo.c_str());
+
     JNI_GetCreatedJavaVMs(&jvm, 1, NULL);
     jvm->AttachCurrentThread((void **)&env, NULL);
 
@@ -34,6 +36,7 @@ std::string Stage3::blep(std::string foo) {
     env->ReleaseStringUTFChars(jfoo, cfoo);
 
     jvm->DetachCurrentThread();
+    printf("Return value[3]: %s\n", rv);
     return rv;
 }
 

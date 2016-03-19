@@ -3,6 +3,8 @@
 from ctypes import *
 
 def blep(foo):
+	print('Stage 6:', foo)
+
 	mono = CDLL('libmonosgen-2.0.so.1')
 
 	mono.mono_jit_init.restype = c_void_p
@@ -25,6 +27,8 @@ def blep(foo):
 	arg = c_void_p(mono.mono_string_new(dom, c_char_p(foo.encode())))
 	mrv = mono.mono_runtime_invoke(met, None, byref(arg), None)
 	prv = mono.mono_string_to_utf8(mono.mono_object_to_string(mrv)).decode()
+
+	print('Return value[6]:', prv)
 	return prv
 
 if __name__ == '__main__':

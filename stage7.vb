@@ -4,21 +4,22 @@ Imports V8InterfaceThing
 
 Public Class Stage7Runner
     Public Shared Function blep(ByVal foo As String) As String
-        Dim jrv As IntPtr, glo As IntPtr, func As IntPtr, params As IntPtr, crv As IntPtr, vbrv As String
+        System.Console.WriteLine ("Stage 7: "+foo)
 
-        JX_InitializeOnce(".")
+        Dim jrv As IntPtr, glo As IntPtr, func As IntPtr, params As IntPtr, crv As IntPtr, vbrv As String
+        Dim prog As String
+
+        JX_InitializeOnce("stage7.exe")
         JX_InitializeNewEngine()
-        JX_DefineMainFile("require('stage8.js')")
+        JX_DefineMainFile("process.stage = require('./stage8.js'); console.log('STAGE8 STARTUP DONE');")
         JX_StartEngine()
         JX_Loop() ' startup
 
         params = Marshal.AllocCoTaskMem(40) ' sizeof(JXValue) == 40
         jrv    = Marshal.AllocCoTaskMem(40)
-        glo    = Marshal.AllocCoTaskMem(40)
         func   = Marshal.AllocCoTaskMem(40)
 
-        JX_GetGlobalObject(glo)
-        JX_GetNamedProperty(glo, "blep", func)
+        JX_Evaluate("process.stage.blep;", "eval", func)
 
         JX_New(params)
         JX_SetString(params, foo, Len(foo))
@@ -31,6 +32,7 @@ Public Class Stage7Runner
 
         'JX_Loop() ' teardown
 
+        System.Console.WriteLine ("Return value[7]: "+vbrv)
         return vbrv
     End Function
 End Class
@@ -43,31 +45,37 @@ Module Main
 End Module
 
 Public Class V8InterfaceThing
-    <DllImport("jx")> Public Shared Function JX_InitializeOnce(ByVal homedir As String) As Object
+    <DllImport("jx")> Public Shared Function JX_IsUndefined(ByVal obj As IntPtr) As Boolean
     End Function
-    <DllImport("jx")> Public Shared Function JX_InitializeNewEngine() As Object
+    <DllImport("jx")> Public Shared Function JX_InitializeOnce(ByVal homedir As String) As IntPtr
     End Function
-    <DllImport("jx")> Public Shared Function JX_DefineMainFile(ByVal code As String) As Object
+    <DllImport("jx")> Public Shared Function JX_InitializeNewEngine() As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_StartEngine() As Object
+    <DllImport("jx")> Public Shared Function JX_Evaluate(ByVal code As String, ByVal scriptname As String, ByVal out As IntPtr) As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_Loop() As Object
+    <DllImport("jx")> Public Shared Function JX_DefineMainFile(ByVal code As String) As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_Free(ByRef ptr As IntPtr) As Object
+    <DllImport("jx")> Public Shared Function JX_StartEngine() As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_New(ByRef ptr As IntPtr) As Object
+    <DllImport("jx")> Public Shared Function JX_Loop() As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_SetString(ByRef s As IntPtr, ByVal v As String, ByVal l As Integer) _
-            As Object
+    <DllImport("jx")> Public Shared Function JX_LoopOnce() As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_GetGlobalObject(ByRef obj As IntPtr) As Object
+    <DllImport("jx")> Public Shared Function JX_Free(ByVal ptr As IntPtr) As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_CallFunction(ByRef func As IntPtr, ByRef args As IntPtr, _
-            ByVal argc As Integer, ByRef retval As IntPtr) As Object
+    <DllImport("jx")> Public Shared Function JX_New(ByVal ptr As IntPtr) As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_GetString(ByRef jxo As IntPtr) As IntPtr
+    <DllImport("jx")> Public Shared Function JX_SetString(ByVal s As IntPtr, ByVal v As String, ByVal l As Integer) _
+            As Integer
     End Function
-    <DllImport("jx")> Public Shared Function JX_GetNamedProperty(ByRef jxo As IntPtr, ByVal prop As String, _
-            ByRef out As IntPtr) As IntPtr
+    <DllImport("jx")> Public Shared Function JX_GetGlobalObject(ByVal obj As IntPtr) As Integer
+    End Function
+    <DllImport("jx")> Public Shared Function JX_CallFunction(ByVal func As IntPtr, ByVal args As IntPtr, _
+            ByVal argc As Integer, ByVal retval As IntPtr) As Integer
+    End Function
+    <DllImport("jx")> Public Shared Function JX_GetString(ByVal jxo As IntPtr) As IntPtr
+    End Function
+    <DllImport("jx")> Public Shared Function JX_GetNamedProperty(ByVal jxo As IntPtr, ByVal prop As String, _
+            ByVal out As IntPtr) As IntPtr
     End Function
 End Class

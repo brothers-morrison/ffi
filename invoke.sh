@@ -4,6 +4,11 @@
 DEBUG=""
 
 if [ $1 = "-d" ]; then
+    DEBUG="gdb -x gdb.init -ex run --args"
+    shift
+fi
+
+if [ $1 = "-D" ]; then
     DEBUG="gdb -x gdb.init --args"
     shift
 fi

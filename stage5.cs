@@ -7,6 +7,7 @@ namespace stage5 {
     {
         static public string blep(string foo)
         {
+            Console.WriteLine("Stage 5: "+foo);
             Py_Initialize();
             IntPtr mod  = PyImport_ImportModule("stage6");
             IntPtr func = PyObject_GetAttrString(mod, "blep");
@@ -20,6 +21,8 @@ namespace stage5 {
             IntPtr sres = PyBytes_AsString(bres);
             string s = Marshal.PtrToStringUni(sres, (int)size/2);
             Py_Finalize();
+
+            Console.WriteLine("Return value[5]: "+s);
             return s;
         }
 

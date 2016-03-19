@@ -12,6 +12,8 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class Stage4 {
 	public static String blep(String foo) {
+		System.out.println("Stage 4: "+foo);
+
 		final MonoLibrary m = MonoLibrary.INSTANCE;
 		final MonoDomain dom = m.mono_jit_init("stage4");
 		final MonoAssembly asm = m.mono_domain_assembly_open(dom, "stage5.exe");
@@ -24,12 +26,13 @@ public class Stage4 {
 		PointerByReference pargs =  new PointerByReference();
 		pargs.setPointer(mem.share(0));
 		MonoObject obj = m.mono_runtime_invoke(met, null, pargs, (PointerByReference)null);
-		/*MonoString rv = new MonoString();
+		MonoString rv = new MonoString();
 		rv.use(obj.getPointer());
 		String jrv = m.mono_string_to_utf8(rv).getPointer().getString(0);
 
-		m.mono_jit_cleanup(dom);*/
-		return foo; //jrv
+		/* m.mono_jit_cleanup(dom); */
+		System.out.println("Return value[4]: "+jrv);
+		return jrv;
 	}
 
 	public static void main(String args[]) {
