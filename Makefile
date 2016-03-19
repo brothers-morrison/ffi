@@ -47,7 +47,8 @@ Stage1.class: Stage1.java libStage2.so
 
 .PHONY: clean
 clean:
-	rm -f *.so
-	rm -f *.class
-	rm -f stage2 stage3
-	rm -f *.exe
+	rm -f libStage2.so libstage3.so
+	rm -f Stage1.class Stage2.class Stage4.class
+	rm -f stage2 stage3 stage5
+	rm -f stage5.exe stage7.exe
+	rm -f temp.c temp.o temp.s
