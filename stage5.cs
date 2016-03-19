@@ -8,7 +8,7 @@ namespace stage5 {
         static public string blep(string foo)
         {
             Py_Initialize();
-            IntPtr mod   = PyImport_ImportModule("stage6");
+            IntPtr mod  = PyImport_ImportModule("stage6");
             IntPtr func = PyObject_GetAttrString(mod, "blep");
             IntPtr args = PyTuple_New(1);
             IntPtr pfoo = PyUnicode_FromString(foo);
