@@ -11,7 +11,7 @@ Public Class Stage7Runner
 
         JX_InitializeOnce("stage7.exe")
         JX_InitializeNewEngine()
-        JX_DefineMainFile("process.stage = require('./stage8.js'); console.log('STAGE8 STARTUP DONE');")
+        JX_DefineMainFile("process.stage = require('./stage8.js');")
         JX_StartEngine()
         JX_Loop() ' startup
 

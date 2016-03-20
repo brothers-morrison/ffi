@@ -1,5 +1,3 @@
-console.log('STAGE 8 LOADING');
-
 module.exports = {
     blep: function (foo) {
         console.log('Stage 8: '+foo);

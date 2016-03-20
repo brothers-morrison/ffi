@@ -12,4 +12,4 @@ if [ $1 = "-D" ]; then
     DEBUG="gdb -x gdb.init --args"
     shift
 fi
-${DEBUG} env LD_PRELOAD=/usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjsig.so PYTHONPATH=/home/jaseg/dev/toys/ffi MONO_PATH=/home/jaseg/dev/toys/ffi/mono/mcs/class/lib/net_4_x LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server:. java -Djava.library.path=/home/jaseg/dev/toys/ffi -cp ./nativelibs4java/libraries/Mono/Mono.jar:. -Djava.compiler=NONE Stage1 $@
+${DEBUG} env LD_PRELOAD=/usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjsig.so PYTHONPATH=/home/jaseg/dev/toys/ffi LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server:/home/jaseg/dev/toys/ffi java -Djava.library.path=/home/jaseg/dev/toys/ffi -cp ./nativelibs4java/libraries/Mono/Mono.jar:. -Djava.compiler=NONE Stage1 $@
