@@ -1,28 +1,36 @@
 
 
-all: Stage1.class stage2 stage3
+all: allstages
+
+.PHONY: allstages
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so
+
+
+libstage8.5.so: stage8.5.c
+	gcc -g -shared -fPIC $(shell perl -MExtUtils::Embed -e ccopts -e ldopts) -o libstage8.5.so $<
+	gcc -g $(shell perl -MExtUtils::Embed -e ccopts -e ldopts) -o stage8.5 $<
 
 stage7.exe: stage7.vb
 	vbnc $<
 
-stage5.exe: stage5.cs stage7.exe
+stage5.exe: stage5.cs
 	mcs $<
 
-stage5: stage5.exe stage7.exe
+stage5: stage5.exe
 	mkbundle --keeptemp stage5.exe -o stage5
 	#FIXME make this portable
-	gcc -ggdb -o stage5 -Wall -D_REENTRANT -I/usr/lib/pkgconfig/../../include/mono-2.0 -L/usr/lib/pkgconfig/../../lib -lmonosgen-2.0 -lm -lrt -ldl -lpthread temp.c temp.o
+	gcc -ggdb -o stage5 -Wall -D_REENTRANT -I/usr/local/lib/pkgconfig/../../include/mono-2.0 -L/usr/local/lib/pkgconfig/../../lib -lmono-2.0 -lm -lrt -ldl -lpthread temp.c temp.o
 
-Stage4.class: Stage4.java stage5.exe stage5
+Stage4.class: Stage4.java
 	javac -cp ./nativelibs4java/libraries/Mono/Mono.jar $<
 
 
-libstage3.so: stage3.cpp stage3.hpp Stage4.class
-	g++ -g -shared -fPIC -ljvm -L /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server -I /usr/lib/jvm/java-8-openjdk/include -I /usr/lib/jvm/java-8-openjdk/include/linux -o libstage3.so $<
+libstage3.so: stage3.cpp stage3.hpp
+	g++ -g -shared -fPIC -ljvm -L /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server -I /usr/lib/jvm/java-7-openjdk-amd64/include -I /usr/lib/jvm/java-7-openjdk-amd64/include/linux -o libstage3.so $<
 
 
 stage3: stage3.cpp stage3.hpp Stage4.class
-	g++ -g -ljvm -L /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server -I /usr/lib/jvm/java-8-openjdk/include -I /usr/lib/jvm/java-8-openjdk/include/linux -o stage3 $<
+	g++ -g -ljvm -L /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server -I /usr/lib/jvm/java-7-openjdk-amd64/include -I /usr/lib/jvm/java-7-openjdk-amd64/include/linux -o stage3 $<
 
 
 Stage2.class: Stage2.java
@@ -33,17 +41,21 @@ Stage2.h: Stage2.class
 	javah Stage2
 
 
-libStage2.so: Stage2.c Stage2.h libstage3.so
-	gcc -g -shared -fPIC -ldl -I /usr/lib/jvm/java-8-openjdk/include -I /usr/lib/jvm/java-8-openjdk/include/linux -o libStage2.so $<
+libStage2.so: Stage2.c Stage2.h
+	gcc -g -shared -fPIC -ldl -I /usr/lib/jvm/java-7-openjdk-amd64/include -I /usr/lib/jvm/java-7-openjdk-amd64/include/linux -o libStage2.so $<
 
 
-stage2: Stage2.c Stage2.h libstage3.so
-	gcc -g -ldl -I /usr/lib/jvm/java-8-openjdk/include -I /usr/lib/jvm/java-8-openjdk/include/linux -o stage2 $<
+stage2: Stage2.c Stage2.h
+	gcc -g -ldl -I /usr/lib/jvm/java-7-openjdk-amd64/include -I /usr/lib/jvm/java-7-openjdk-amd64/include/linux -o stage2 $<
 
 
-Stage1.class: Stage1.java libStage2.so
+Stage1.class: Stage1.java
 	javac $<
 
+
+.PHONY: sync
+sync:
+	rsync -avP . ffivm:ffi/ --exclude=jxcore --exclude=levm.qcow2 --exclude=mono
 
 .PHONY: clean
 clean:

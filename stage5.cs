@@ -34,35 +34,35 @@ namespace stage5 {
 
     public class PythonInterfaceThing
     {
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern void Py_Initialize();
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyImport_ImportModule(string name);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyObject_GetAttrString(IntPtr obj, string name);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyTuple_New(int len);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyObject_CallObject(IntPtr func, IntPtr args);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern void PyTuple_SetItem(IntPtr tup, int idx, IntPtr val);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyUnicode_FromString(string str);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyUnicode_AsUTF16String(IntPtr pstr);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyBytes_AsString(IntPtr pstr);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern long PyBytes_Size(IntPtr pstr);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyUnicode_AsUnicode(IntPtr pstr);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern IntPtr PyObject_Str(IntPtr pstr);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern int PyUnicode_Check(IntPtr pstr);
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern void Py_Finalize();
-        [DllImport("python3.5m")]
+        [DllImport("python3.4m")]
             public static extern void PyErr_Print();
     }
 }
