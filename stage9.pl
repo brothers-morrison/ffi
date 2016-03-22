@@ -19,10 +19,6 @@ sub blep {
     return $bar;
 }
 
-unless (caller) {
-    blep(@ARGV)
-}
-
 __END__
 __C__
 #include <mruby.h>
@@ -63,12 +59,14 @@ char *perl_mrb_call_wrapper_s_s(void * _mr, void * ins, char* name, char* arg) {
     mrb_state *mr = (mrb_state*)_mr;
     mrb_value rarg = mrb_str_new(mr, arg, strlen(arg));
     mrb_value rv = mrb_funcall(mr, *((mrb_value*)ins), name, 1, &rarg);
-    if (mr->exc) 
+    if (mr->exc) {
         mrb_print_error(mr);
-        return "";
+        return "ERROR[Stage 9]";
+    }
     char *crv = mrb_str_to_cstr(mr, rv);
-    if (mr->exc) 
+    if (mr->exc) {
         mrb_print_error(mr);
-        return "";
+        return "ERROR[Stage 9]";
+    }
     return crv;
 }

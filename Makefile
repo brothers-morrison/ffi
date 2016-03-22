@@ -64,8 +64,8 @@ sync:
 
 .PHONY: clean
 clean:
-	rm -f libStage2.so libstage3.so
+	rm -f libStage2.so libstage3.so libstage8.5.so
 	rm -f Stage1.class Stage2.class Stage4.class
-	rm -f stage2 stage3 stage5
+	rm -f stage2 stage3 stage5 stage8.5
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s

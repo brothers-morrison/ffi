@@ -27,6 +27,10 @@ static void xs_init(pTHX) {
     newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 }
 
+/* HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK * 
+ * K  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  HACK  H */
+void Perl_xs_apiversion_bootcheck(pTHX_ SV *module, const char *api_p, STRLEN api_len) {}
+
 char *stage8h_blep(char *foo) {
     printf("Stage 8.5: %s\n", foo);
     PerlInterpreter *my_perl; /* NOTE: Due to shitty programming, this variable *must* have this name. Fuck Perl. */
