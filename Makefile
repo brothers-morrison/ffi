@@ -3,8 +3,13 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so Mruby
 
+
+Mruby:
+	INCLUDE_PATH=mruby/include h2xs $(shell realpath mruby/include/mruby.h) $(shell realpath mruby/include/mruby/irep.h) -L/usr/local/lib -lmruby
+	cd Mruby && perl Makefile.PL
+	make -C Mruby
 
 libstage8.5.so: stage8.5.c
 	gcc -g -shared -fPIC $(shell perl -MExtUtils::Embed -e ccopts -e ldopts) -o libstage8.5.so $<
@@ -55,7 +60,7 @@ Stage1.class: Stage1.java
 
 .PHONY: sync
 sync:
-	rsync -avP . ffivm:ffi/ --exclude=jxcore --exclude=levm.qcow2 --exclude=mono
+	rsync -avP . ffivm:ffi/ --exclude=jxcore --exclude=levm.qcow2 --exclude=mono --exclude=node_modules
 
 .PHONY: clean
 clean:

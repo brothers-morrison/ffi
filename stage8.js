@@ -2,7 +2,7 @@ var ffi = require('ffi');
 var ref = require('ref');
 
 var helper = ffi.Library('./libstage8.5', {
-    'stage8h_blep': ['char *', ['char *']]
+    'stage8h_blep': ['string', ['string']]
 });
 
 module.exports = {
@@ -13,3 +13,8 @@ module.exports = {
         return bar;
     }
 };
+
+
+if (require.main === module) {
+    module.exports.blep("test");
+}
