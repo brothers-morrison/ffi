@@ -60,7 +60,7 @@ Stage1.class: Stage1.java
 
 .PHONY: sync
 sync:
-	rsync -avP . ffivm:ffi/ --exclude=jxcore --exclude=levm.qcow2 --exclude=mono --exclude=node_modules
+	rsync -avP . ffivm:ffi/ --exclude=jxcore --exclude=levm.qcow2 --exclude=mono --exclude=node_modules --exclude=mruby
 
 .PHONY: clean
 clean:
@@ -69,3 +69,4 @@ clean:
 	rm -f stage2 stage3 stage5 stage8.5
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s
+	rm -rf _Inline __pycache__

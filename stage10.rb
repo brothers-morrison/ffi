@@ -10,7 +10,4 @@ module Stage10
     end
 end
 
-if __FILE__ == $0
-    s10 = Stage10::Stage10Runner.new
-    puts s10.blep(ARGV.join(" "))
-end
+Stage10
