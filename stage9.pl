@@ -6,16 +6,9 @@ sub blep {
     my ($foo) = @_;
     print "Stage 9: ${foo}\n";
 
-    my $mr = perl_mrb_open();
-    my $rbf = perl_mrb_load_file($mr, 'stage10.rb');
-
-#    my $mod = perl_mrb_module_get_under($mr, $rbf, 'Stage10');
-#    my $cls = perl_mrb_class_get_under($mr, $mod, 'Stage10Runner');
-    my $ins = perl_mrb_obj_new($mr, $rbf);
-
-    my $bar = perl_mrb_call_wrapper_s_s($mr, $ins, "blep", foo);
-
-    perl_mrb_close($mr);
+    my $mrb = perl_mrb_init("stage10.rb");
+    my $bar = perl_mrb_call_s_s($mrb, "Stage10Runner", "blep", $foo);
+    perl_mrb_deinit($mrb);
 
     print "Return value[9]: ${bar}\n";
     return $bar;
@@ -27,55 +20,26 @@ __END__
 __C__
 #include <mruby.h>
 #include <mruby/compile.h>
+#include <mruby/irep.h>
+#include <mruby/string.h>
 #include <string.h>
 #include <errno.h>
 
-void * perl_mrb_open() {
-    return mrb_open();
-}
+char *perl_do_the_thing(char *fname, void *_mrb, char *cname, char *mname, char *arg1) {
+    FILE *fp = fopen(fname, "rb");
 
-void perl_mrb_close(void * mr) {
-    return mrb_close((mrb_state*)mr);
-}
+    mrb_state *mrb = mrb_open();
+    mrb_value inst;
+    inst = mrb_load_irep_file_cxt(mrb, fp, NULL);
 
-void * perl_mrb_module_get_under(void * mr, void * ins, char * name) {
-    printf("Looking up module \"%s\" in ctx %p\n", name, mr);
-    return mrb_module_get_under((mrb_state*)mr, (struct RClass *)ins, name);
-}
+    mrb_value argv[1];
+    argv[0] = mrb_str_new(mrb, arg1, strlen(arg1));
+    mrb_value rbrv = mrb_funcall_argv(mrb, inst, mrb_intern(mrb, mname, strlen(mname)), 1, argv);
 
-void * perl_mrb_class_get_under(void * mr, void * obj, char* name) {
-    return mrb_class_get_under((mrb_state*)mr, (struct RClass*)obj, name);
-}
+    char *rv = strdup(RSTRING_PTR(rbrv));
 
-void * perl_mrb_obj_new(void * mr, void * cls) {
-    mrb_value *val = malloc(sizeof(mrb_value));
-    *val = mrb_obj_new((mrb_state*)mr, (struct RClass*)cls, 0, NULL);
-    return val;
-}
-
-void * perl_mrb_load_file(void * mr, char * fn) {
-    mrb_value *val = malloc(sizeof(mrb_value));
-    FILE *fp = fopen(fn, "r");
-    mrbc_context* ctx = mrbc_context_new((mrb_state*)mr);
-    mrbc_filename((mrb_state*)mr, ctx, fn);
-    *val = mrb_load_file_cxt((mrb_state*)mr, fp, ctx);
-    printf("loading: %p %p %p\n", ctx, fp, val);
+    mrb_close(mrb);
     fclose(fp);
-    return val;
-}
 
-char *perl_mrb_call_wrapper_s_s(void * _mr, void * ins, char* name, char* arg) {
-    mrb_state *mr = (mrb_state*)_mr;
-    mrb_value rarg = mrb_str_new(mr, arg, strlen(arg));
-    mrb_value rv = mrb_funcall(mr, *((mrb_value*)ins), name, 1, &rarg);
-    if (mr->exc) {
-        mrb_print_error(mr);
-        return "ERROR[Stage 9]";
-    }
-    char *crv = mrb_str_to_cstr(mr, rv);
-    if (mr->exc) {
-        mrb_print_error(mr);
-        return "ERROR[Stage 9]";
-    }
-    return crv;
+    return rv;
 }

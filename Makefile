@@ -3,8 +3,11 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so Mruby
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so Mruby stage10.mrb
 
+
+stage10.mrb: stage10.rb Mruby
+	mruby/build/host/bin/mrbc $<
 
 Mruby:
 	INCLUDE_PATH=mruby/include h2xs $(shell realpath mruby/include/mruby.h) $(shell realpath mruby/include/mruby/irep.h) -L/usr/local/lib -lmruby
