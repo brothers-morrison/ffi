@@ -13,8 +13,6 @@ sub blep {
     return $bar;
 }
 
-blep('test')
-
 __END__
 __C__
 #include <ruby.h>
@@ -50,7 +48,7 @@ char *perl_do_the_thing(char *fname, char *arg1) {
         print_rb_exc();
         return "Ruby funcall failed.";
     }
-    //char *rv = strdup(rb_str_value_cstr(rbrv));
+    char *rv = strdup(StringValueCStr(rbrv));
     ruby_cleanup(0);
-    return "foo";
+    return rv;
 }
