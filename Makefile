@@ -5,8 +5,11 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so libstage11.so
 
+
+libstage11.so: stage11.pas
+	fpc -Mdelphi -Tlinux -Xc $<
 
 libstage8.5.so: stage8.5.c
 	gcc -g -shared -fPIC $(shell perl -MExtUtils::Embed -e ccopts -e ldopts) -o libstage8.5.so $<
