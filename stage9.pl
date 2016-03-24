@@ -1,14 +1,13 @@
 use Inline C;
-use Inline C => config => libs => '-L/usr/local/lib -lmruby',
-                          clean_after_build => 0;
+use Inline C => config => libs => '-lruby-2.1',
+                          clean_after_build => 0,
+                          inc => '-I/usr/include/ruby-2.1.0 -I/usr/include/x86_64-linux-gnu/ruby-2.1.0';
 
 sub blep {
     my ($foo) = @_;
     print "Stage 9: ${foo}\n";
 
-    my $mrb = perl_mrb_init("stage10.rb");
-    my $bar = perl_mrb_call_s_s($mrb, "Stage10Runner", "blep", $foo);
-    perl_mrb_deinit($mrb);
+    my $bar = perl_do_the_thing("./stage10.rb", $foo);
 
     print "Return value[9]: ${bar}\n";
     return $bar;
@@ -18,28 +17,40 @@ blep('test')
 
 __END__
 __C__
-#include <mruby.h>
-#include <mruby/compile.h>
-#include <mruby/irep.h>
-#include <mruby/string.h>
+#include <ruby.h>
 #include <string.h>
 #include <errno.h>
 
-char *perl_do_the_thing(char *fname, void *_mrb, char *cname, char *mname, char *arg1) {
-    FILE *fp = fopen(fname, "rb");
+VALUE funcall_wrapper(VALUE actors) {
+	return rb_funcall(rb_mKernel, rb_intern("blep"), 1, actors);
+}
 
-    mrb_state *mrb = mrb_open();
-    mrb_value inst;
-    inst = mrb_load_irep_file_cxt(mrb, fp, NULL);
+void print_rb_exc(void) {
+	VALUE exception = rb_errinfo();
+	rb_set_errinfo(Qnil);
+	if (RTEST(exception)) {
+        rb_warn("Ruby exception: %"PRIsVALUE"", exception);
+    }
+}
 
-    mrb_value argv[1];
-    argv[0] = mrb_str_new(mrb, arg1, strlen(arg1));
-    mrb_value rbrv = mrb_funcall_argv(mrb, inst, mrb_intern(mrb, mname, strlen(mname)), 1, argv);
-
-    char *rv = strdup(RSTRING_PTR(rbrv));
-
-    mrb_close(mrb);
-    fclose(fp);
-
-    return rv;
+char *perl_do_the_thing(char *fname, char *arg1) {
+    int state = 0;
+    if (ruby_setup()) {
+        return "Ruby setup failed.";
+    }
+    ruby_script("stage9");
+    ruby_init_loadpath();
+    rb_load_protect(rb_str_new_cstr(fname), 0, &state);
+    if (state) {
+        print_rb_exc();
+        return "Ruby load_protect failed.";
+    }
+    VALUE rbrv = rb_protect(funcall_wrapper, rb_str_new_cstr(arg1), &state);
+    if (state) {
+        print_rb_exc();
+        return "Ruby funcall failed.";
+    }
+    //char *rv = strdup(rb_str_value_cstr(rbrv));
+    ruby_cleanup(0);
+    return "foo";
 }
