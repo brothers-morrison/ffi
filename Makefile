@@ -9,7 +9,7 @@ allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class sta
 
 
 libstage11.so: stage11.pas
-	fpc -Mdelphi -Tlinux -Xc $<
+	fpc -Mdelphi -Tlinux -Xc -Cg -gw $<
 
 libstage8.5.so: stage8.5.c
 	gcc -g -shared -fPIC $(shell perl -MExtUtils::Embed -e ccopts -e ldopts) -o libstage8.5.so $<
