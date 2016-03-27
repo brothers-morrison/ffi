@@ -4,5 +4,6 @@ public class Stage1 {
 		Stage2 s = new Stage2();
 		System.out.println("Stage 1: "+args[0]);
 		System.out.println("Return value[1]: "+s.blep(args[0]));
+		s.diedieDIE(); /* your're welcome. */
 	}
 }

@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <dlfcn.h>
 #include "Stage2.h"
 
@@ -44,5 +45,10 @@ JNIEXPORT jstring JNICALL Java_Stage2_blep (JNIEnv *env, jobject obj, jstring fo
 
     (*env)->ReleaseStringUTFChars(env, foo, cfoo);
     return res;
+}
+
+JNIEXPORT void JNICALL Java_Stage2_diedieDIE (JNIEnv *env, jobject obj)
+{
+    exit(0);
 }
 
