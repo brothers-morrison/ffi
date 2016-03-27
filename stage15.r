@@ -62,7 +62,7 @@ blep <- function(foo) {
     ')
     rv = stage16_wrapper(foo)
 
-    cat("Return value [15]:", foo, "\n")
+    cat("Return value [15]:", rv, "\n")
     return(rv)
 }
 

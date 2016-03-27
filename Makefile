@@ -5,8 +5,15 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5
 
+
+libstage16.5.so: stage16.5.cpp
+	g++ -g -shared -fPIC -I/usr/include/octave-3.8.2 -I/usr/include/octave-3.8.2/octave -I/usr/include/hdf5/serial -I/usr/include/mpi -pthread -fopenmp -L/usr/lib/x86_64-linux-gnu/octave/3.8.2 -L/usr/lib/x86_64-linux-gnu -loctinterp -loctave -o $@ $<
+#	env CFLAGS="-shared -fPIC" mkoctfile -v --link-stand-alone $< -o $@
+
+stage16.5: stage16.5.cpp
+	mkoctfile -v --link-stand-alone $< -o $@
 
 rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h:
 	env R_HOME=/usr make -C rinside/src -f Makevars headers
@@ -81,9 +88,9 @@ sync:
 
 .PHONY: clean
 clean:
-	rm -f libStage2.so libstage3.so libstage8.5.so libstage11.so libstage12.so libstage13.so libstage14.so
+	rm -f libStage2.so libstage3.so libstage8.5.so libstage11.so libstage12.so libstage13.so libstage14.so libstage16.5.so
 	rm -f Stage1.class Stage2.class Stage4.class
-	rm -f stage2 stage3 stage5 stage8.5
+	rm -f stage2 stage3 stage5 stage8.5 stage16.5
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s
 	rm -f rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
