@@ -1,6 +1,8 @@
 #import "Stage14Wrapper.h"
 #import "RInside.h"
 
+#import <iostream>
+
 struct Stage14WrapperImpl {
     RInside wrapped;
 };
@@ -23,13 +25,14 @@ struct Stage14WrapperImpl {
 - (NSString*)blep:(NSString*)foo {
     std::string rfoo([foo UTF8String], [foo lengthOfBytesUsingEncoding:NSUTF8StringEncoding]);
     std::ostringstream stm;
-    stm << "[Stage 13: ";
-    stm << rfoo;
-    stm << "]";
-//    Rcpp::Function rblep = impl->wrapped["blep"];
-//    SEXP rrv = rblep(rfoo);
-//    return [NSString stringWithUTF8String:Rcpp::as<std::string>(rrv).c_str()];
-    return [NSString stringWithUTF8String:stm.str().c_str()];
+    std::cout << "Stage 14: " << rfoo << std::endl;
+    stm << "[Stage 14: " << rfoo << "]";
+    impl->wrapped.parseEvalQ("source(\"stage15.r\")");
+    Rcpp::Function rblep = impl->wrapped["blep"];
+    SEXP rrv = rblep(rfoo);
+    std::string rv = Rcpp::as<std::string>(rrv);
+    std::cout << "Return value [14]: " << rv << std::endl;
+    return [NSString stringWithUTF8String:rv.c_str()];
 }
 
 @end

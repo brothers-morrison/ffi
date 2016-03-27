@@ -15,7 +15,7 @@ rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h:
 
 libstage14.so: stage14.mm rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
 	# please excuse this abomination
-	clang -Wall -g -shared -fPIC -I/usr/include/GNUstep -Irinside/inst/include -I/usr/lib/R/site-library/Rcpp/include -I/usr/share/R/include -Xlinker -lgnustep-base -lR -fvisibility=hidden -I./rfix -o $@ $< rinside/src/RInside.cpp rinside/src/MemBuf.cpp /usr/lib/R/site-library/Rcpp/libs/Rcpp.so
+	clang -Wall -g -shared -fPIC -I/usr/include/GNUstep -Irinside/inst/include -I/usr/lib/R/site-library/Rcpp/include -I/usr/share/R/include -Xlinker -lgnustep-base -lR -fvisibility=hidden -I./rfix -O0 -o $@ $< rinside/src/RInside.cpp rinside/src/MemBuf.cpp /usr/lib/R/site-library/Rcpp/libs/Rcpp.so
 
 libstage13.so: stage13.m libstage14.so
 	clang -Wall -g -shared -fPIC -lobjc -o $@ -I /usr/include/GNUstep -Xlinker -lgnustep-base -fconstant-string-class=NSConstantString -L. -lstage14 $<

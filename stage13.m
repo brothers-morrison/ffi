@@ -9,7 +9,7 @@ const char *stage13_blep(char * foo)
         printf("Stage 13: %s\n", [ofoo UTF8String]);
 
         Stage14Wrapper *s14 = [[Stage14Wrapper alloc] init];
-        NSString *bar = [NSString stringWithFormat:@"[Stage 13: %@]", ofoo];
+        NSString *bar = [s14 blep:ofoo];
         [s14 release];
 
         printf("Return value[13]: %s\n", [bar UTF8String]);
