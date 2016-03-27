@@ -21,4 +21,4 @@ def blep_13(foo):
 	return stage13.stage13_blep(b'test').decode()
 
 if __name__ == '__main__':
-	print('Overall return value:', blep_11('test'))
+	print('Overall return value:', blep_13('test'))
