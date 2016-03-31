@@ -1,14 +1,15 @@
-#include "postgres.h"
 #include <string.h>
+#include <stdio.h>
+
+extern void blep_(const char *foo, char **bar, int foolen, int *barlen);
+
+#ifndef DEBUG_BUILD
+#include "postgres.h"
 #include "fmgr.h"
 
 #ifdef PG_MODULE_MAGIC
 PG_MODULE_MAGIC;
 #endif
-
-extern void blep_(const char *foo, char **bar, int foolen, int *barlen);
-
-#ifndef DEBUG_BUILD
 
 void* _Dmodule_ref;
 
@@ -24,7 +25,7 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
 
     char *rv;
     int rvlen;
-    blep_(cfoo, &rv, strlen(cfoo), &rvlen);
+    blep_(cfoo, &rv, &rvlen, strlen(cfoo));
 
     int32 rvsize = rvlen + VARHDRSZ;
     text *prv = (text*)palloc(rvsize);
@@ -38,9 +39,12 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
 int main(void) {
     const char *foo = "test";
     char *bar;
-    int barlen;
+    int barlen, barlen2;
     blep_(foo, &bar, strlen(foo), &barlen);
-    printf("[from C] Result: %s\n", bar);
+    printf("fortran res: %p %zu\n", bar, barlen);
+    char *out = strndup(bar, barlen);
+    munmap(bar, barlen);
+    printf("[from C] Result (%d): %s\n", barlen, out);
     return 0;
 }
 

@@ -12,7 +12,7 @@ stage18helper.o: stage18helper.c
 	gcc -g -c -fPIC -Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include -o $@ $<
 
 stage19.o: stage19.f90
-	gfortran -g -c -std=f2003  -fPIC -o $@ $<
+	gfortran -g -c -fPIC -o $@ $<
 
 libstage19.so: stage18helper.c stage19.o
 	gcc -g -fPIC -shared -Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include -L/usr/lib/gcc/x86_64-linux-gnu/4.9 -lgfortran -o $@ $^
