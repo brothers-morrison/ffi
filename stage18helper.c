@@ -23,9 +23,17 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
     memcpy(cfoo, VARDATA(foo), foolen);
     cfoo[foolen] = '\0';
 
-    char *rv;
+    char *orv;
     int rvlen;
-    blep_(cfoo, &rv, &rvlen, strlen(cfoo));
+    //fprintf(stderr, "Stage 18.5: %s\n", cfoo);
+    blep_(cfoo, &orv, &rvlen, strlen(cfoo));
+    //char *crv = malloc(rvlen+1);
+    //strncpy(crv, rv, rvlen);
+    //crv[rvlen] = 0;
+    //fprintf(stderr, "Return value [18.5]: %s\n", crv);
+    char *rv = malloc(128);
+    rvlen = snprintf(rv, 128, "rv: <%d | %p> %s", rvlen, orv, strndup(orv, rvlen));
+    munmap(orv, rvlen);
 
     int32 rvsize = rvlen + VARHDRSZ;
     text *prv = (text*)palloc(rvsize);

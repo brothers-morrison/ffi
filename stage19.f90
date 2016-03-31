@@ -32,8 +32,11 @@ SUBROUTINE Blep ( foo, bar, barlen )
   WRITE(fname, 1717) GETPID()
 1717 FORMAT ('/tmp/shellout.', I6.6)
 
+  WRITE(0, 1705) foo
+1705 FORMAT ('Stage 19: ', A)
+
   ALLOCATE(CHARACTER(len=LEN(foo)+128) :: cmd)
-  WRITE(cmd, 2342), foo, fname
+  WRITE(cmd, 2342) foo, fname
 2342 FORMAT ('./stage20.sh "', A, '" > ', A)
   CALL EXECUTE_COMMAND_LINE(cmd)
 
@@ -44,5 +47,7 @@ SUBROUTINE Blep ( foo, bar, barlen )
   fd = FNUM(unit=23)
   offx = 0
   barlen = flen
+
   bar = cmmap(0, flen, PROT_READ, MAP_PRIVATE, fd, offx)
+
 END SUBROUTINE Blep
