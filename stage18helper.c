@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-extern void blep_(const char *foo, char **bar, int foolen, int *barlen);
+extern void blep_(const char *foo, char **bar, int *barlen, int foolen);
 
 #ifndef DEBUG_BUILD
 #include "postgres.h"
@@ -39,8 +39,8 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
 int main(void) {
     const char *foo = "test";
     char *bar;
-    int barlen, barlen2;
-    blep_(foo, &bar, strlen(foo), &barlen);
+    int barlen;
+    blep_(foo, &bar, &barlen, strlen(foo));
     printf("fortran res: %p %zu\n", bar, barlen);
     char *out = strndup(bar, barlen);
     munmap(bar, barlen);

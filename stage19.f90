@@ -1,8 +1,9 @@
-SUBROUTINE Blep ( foo, bar )
+SUBROUTINE Blep ( foo, bar, barlen )
   USE iso_c_binding
   IMPLICIT NONE
-  CHARACTER*(*), INTENT(IN)  :: foo
-  CHARACTER, POINTER, INTENT(OUT) :: bar(:)
+  CHARACTER*(*), INTENT(IN) :: foo
+  TYPE(c_ptr), INTENT(OUT) :: bar
+  INTEGER(c_int), INTENT(OUT) :: barlen
 
 
   INTERFACE
@@ -42,6 +43,6 @@ SUBROUTINE Blep ( foo, bar )
   OPEN(unit=23, file=fname, status='old')
   fd = FNUM(unit=23)
   offx = 0
-  cptr = cmmap(0, flen, PROT_READ, MAP_PRIVATE, fd, offx)
-  CALL c_f_pointer(cptr, bar, [flen])
+  barlen = flen
+  bar = cmmap(0, flen, PROT_READ, MAP_PRIVATE, fd, offx)
 END SUBROUTINE Blep
