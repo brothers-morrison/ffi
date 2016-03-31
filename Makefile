@@ -5,19 +5,17 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5\
-           libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load libstage19.so
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load libstage19.so
 
 
 stage18helper.o: stage18helper.c
 	gcc -g -c -fPIC -Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include -o $@ $<
 
-stage19.o: stage19.d
-	gdc -g -c -shared -defaultlib=phobos2 -fPIC -o$@ $<
+stage19.o: stage19.f90
+	gfortran -g -c -std=f2003  -fPIC -o $@ $<
 
-libstage19.so: stage18helper.o stage19.o
-	gdc -g -fPIC -shared -o$@ -defaultlib=phobos2 $^
-	#-Xlinker -L/usr/lib/x86_64-linux-gnu 
+libstage19.so: stage18helper.c stage19.o
+	gcc -g -fPIC -shared -Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include -L/usr/lib/gcc/x86_64-linux-gnu/4.9 -lgfortran -o $@ $^
 
 /tmp/testdb:
 	/usr/local/pgsql/bin/initdb -D /tmp/testdb
@@ -66,7 +64,10 @@ libstage13.so: stage13.m libstage14.so
 libstage12.so: stage12.S libstage13.so
 	gcc -g -shared -fPIC -ldl -lc -o $@ $<
 
-libstage11.so: stage11.pas Stage12Wrapper.pas libstage12.so
+Stage12Wrapper.o: Stage12Wrapper.pas
+	fpc -Mdelphi -Tlinux -Xc -Cg -gw $<
+
+libstage11.so: stage11.pas Stage12Wrapper.o libstage12.so
 	fpc -Mdelphi -Tlinux -Xc -Cg -gw $<
 
 libstage8.5.so: stage8.5.c
@@ -129,7 +130,7 @@ clean:
 	rm -f stage2 stage3 stage5 stage8.5 stage16.5
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s
-	rm -f stage18helper.o stage19.o libstage19.so
+	rm -f stage18helper.o stage19.o libstage19.so Stage12Wrapper.o
 	rm -f stage17_makecall.oct
 	rm -f rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
 	rm -rf _Inline __pycache__
