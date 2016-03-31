@@ -5,11 +5,29 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct
 
+
+libpostgres.so: postgresql
+	@echo "[Postgres: making common]"
+	make -j 4 -C postgresql/src/common  CFLAGS="-g -fPIC -msse4.2 -shared" LD_FLAGS="-shared" clean
+	make -j 4 -C postgresql/src/common  CFLAGS="-g -fPIC -msse4.2 -shared" LD_FLAGS="-shared" all
+	@echo "[Postgres: making port]"
+	make -j 4 -C postgresql/src/port    CFLAGS="-g -fPIC -msse4.2 -shared" LD_FLAGS="-shared" clean
+	make -j 4 -C postgresql/src/port    CFLAGS="-g -fPIC -msse4.2 -shared" LD_FLAGS="-shared" all
+	@echo "[Postgres: cleaning backend]"
+	make -j 4 -C postgresql/src/backend clean
+	@echo "[Postgres: making backend]"
+	make -j 4 -C postgresql/src/backend CFLAGS="-g -fPIC -msse4.2 -shared" LD_FLAGS="-shared" ||\
+		make -j 4 -C postgresql/src/backend CFLAGS="-g -fPIC -msse4.2 -shared" LD_FLAGS="-shared"
+	@echo "[Postgres: copying build output]"
+	cp postgresql/src/backend/postgres ./libpostgres.so
+
+stage17_makecall.oct: stage17helper.cpp libpostgres.so
+	CXXFLAGS="-Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include" mkoctfile -g -o $@ $<
 
 libstage16.5.so: stage16.5.cpp
-	g++ -g -shared -fPIC -I/usr/include/octave-3.8.2 -I/usr/include/octave-3.8.2/octave -I/usr/include/hdf5/serial -I/usr/include/mpi -pthread -fopenmp -L/usr/lib/x86_64-linux-gnu/octave/3.8.2 -L/usr/lib/x86_64-linux-gnu -loctinterp -loctave -o $@ $<
+	g++ -g -shared -fPIC -I/usr/local/include/octave-4.0.1 -I/usr/local/include/octave-4.0.1/octave -I/usr/include/hdf5/serial -I/usr/include/mpi -pthread -fopenmp -L/usr/local/lib/octave/4.0.1 -L/usr/local/lib -loctinterp -loctave -o $@ $<
 #	env CFLAGS="-shared -fPIC" mkoctfile -v --link-stand-alone $< -o $@
 
 stage16.5: stage16.5.cpp
@@ -93,5 +111,7 @@ clean:
 	rm -f stage2 stage3 stage5 stage8.5 stage16.5
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s
+	rm -f stage17_makecall.oct
+	rm -f libpostgres.so
 	rm -f rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
 	rm -rf _Inline __pycache__

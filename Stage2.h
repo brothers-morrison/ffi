@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT jstring JNICALL Java_Stage2_blep
   (JNIEnv *, jobject, jstring);
 
+/*
+ * Class:     Stage2
+ * Method:    diedieDIE
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_Stage2_diedieDIE
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

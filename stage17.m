@@ -4,7 +4,8 @@
 
 function rv = blep(foo)
     printf("Stage 17: %s\n", foo);
-    bar = ["[Stage 17: " foo "]"];
+#    bar = ["[Stage 17: " foo "]"];
+    bar = stage17_makecall("blep", foo);
     printf("Return value [17]: %s\n", bar);
     rv = bar;
 endfunction
