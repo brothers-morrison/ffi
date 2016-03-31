@@ -39,7 +39,7 @@ stage17_ctx_t *stage17_init() {
         pgpid = fork();
         atexit(kill_pgpid);
         if (!pgpid) {
-            execl("/usr/local/pgsql/bin/postgres", "/usr/local/pgsql/bin/postgres", "-D", "/tmp/testdb", "-c", "log_min_messages=DEBUG5", (char *)NULL);
+            execl("/usr/local/pgsql/bin/postgres", "/usr/local/pgsql/bin/postgres", "-D", "/tmp/testdb", "-c", "log_min_messages=PANIC", (char *)NULL);
         }
     }
 

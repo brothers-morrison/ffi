@@ -5,8 +5,14 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load
 
+/tmp/testdb:
+	/usr/local/pgsql/bin/initdb -D /tmp/testdb
+
+.PHONY:
+stage18_load: stage18.sql /tmp/testdb
+	./stage18_load.sh
 
 libpostgres.so: postgresql
 	@echo "[Postgres: making common]"
@@ -114,4 +120,8 @@ clean:
 	rm -f stage17_makecall.oct
 	rm -f rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
 	rm -rf _Inline __pycache__
-	# NOTE: Don't delete libpostgres.so here as we don't want to rebuild that every time
+
+.PHONY: mrproper
+mrproper: clean
+	rm -f libpostgres.so
+	rm -rf /tmp/testdb
