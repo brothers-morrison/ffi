@@ -5,13 +5,25 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5\
+           libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load libstage19.so
+
+
+stage18helper.o: stage18helper.c
+	gcc -g -c -fPIC -Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include -o $@ $<
+
+stage19.o: stage19.d
+	gdc -g -c -shared -defaultlib=phobos2 -fPIC -o$@ $<
+
+libstage19.so: stage18helper.o stage19.o
+	gdc -g -fPIC -shared -o$@ -defaultlib=phobos2 $^
+	#-Xlinker -L/usr/lib/x86_64-linux-gnu 
 
 /tmp/testdb:
 	/usr/local/pgsql/bin/initdb -D /tmp/testdb
 
 .PHONY:
-stage18_load: stage18.sql /tmp/testdb
+stage18_load: stage18.sql /tmp/testdb libstage19.so
 	./stage18_load.sh
 
 libpostgres.so: postgresql
@@ -117,6 +129,7 @@ clean:
 	rm -f stage2 stage3 stage5 stage8.5 stage16.5
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s
+	rm -f stage18helper.o stage19.o libstage19.so
 	rm -f stage17_makecall.oct
 	rm -f rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
 	rm -rf _Inline __pycache__
