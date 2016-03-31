@@ -112,6 +112,6 @@ clean:
 	rm -f stage5.exe stage7.exe
 	rm -f temp.c temp.o temp.s
 	rm -f stage17_makecall.oct
-	rm -f libpostgres.so
 	rm -f rinside/src/RInsideAutoloads.h rinside/src/RInsideEnvVars.h
 	rm -rf _Inline __pycache__
+	# NOTE: Don't delete libpostgres.so here as we don't want to rebuild that every time

@@ -1,55 +1,32 @@
 
 #include <octave/oct.h>
 #include <dlfcn.h>
-#include <pthread.h>
+#include <signal.h>
 #include <libpq-fe.h>
 #include <unistd.h>
 
 /* generic postgres stuff is here */
 
 typedef struct {
-    void *pg;
     void *pq;
-    pthread_t backend_runner;
-    pthread_cond_t launch_cond;
-    pthread_mutex_t launch_mutex;
-    int launch_ec;
 } stage17_ctx_t;
 
-static void *stage17_pg_launch(void *_ctx) {
-    stage17_ctx_t *ctx = (stage17_ctx_t *)_ctx;
-    void *(*main_func)(int, char**) = (void *(*)(int, char**))dlsym(ctx->pg, "main");
-    const char *args[] = {"/usr/local/pgsql/bin/postgres", "-D", "/tmp/testdb", "-c", "log_min_messages=PANIC"};
-    char *argv[sizeof(args)/sizeof(args[0])];
-    int nargs = sizeof(args)/sizeof(args[0]);
-    for (int i=0; i<nargs; i++) {
-        argv[i] = strdup(args[i]);
-        if (!argv[i])
-            goto errout;
+static int pgpid = 0;
+
+void kill_pgpid() {
+    if (pgpid) {
+        int pid = pgpid;
+        pgpid = 0;
+        kill(pid, SIGINT);
     }
-    if (!main_func)
-        goto errout;
-    pthread_cond_signal(&ctx->launch_cond);
-    main_func(nargs, argv);
-    ctx->launch_ec = 2;
-    return NULL;
-errout:
-    ctx->launch_ec = 1;
-    pthread_cond_signal(&ctx->launch_cond);
-    return NULL;
 }
 
 void stage17_close(stage17_ctx_t *ctx) {
     if (!ctx)
         return;
-    pthread_cancel(ctx->backend_runner);
-    pthread_join(ctx->backend_runner, NULL);
-    pthread_cond_destroy(&ctx->launch_cond);
-    pthread_mutex_destroy(&ctx->launch_mutex);
+    kill_pgpid();
     if (ctx->pq)
         dlclose(ctx->pq);
-    if (ctx->pg)
-        dlclose(ctx->pg);
     free(ctx);
 }
 
@@ -58,26 +35,16 @@ stage17_ctx_t *stage17_init() {
     if (!ctx)
         goto errout;
 
-    if (pthread_cond_init(&ctx->launch_cond, NULL))
-        goto errout;
-
-    if (pthread_mutex_init(&ctx->launch_mutex, NULL))
-        goto errout;
-
-    ctx->pg = dlopen("./libpostgres.so", RTLD_NOW | RTLD_LOCAL);
-    if (!ctx->pg)
-        goto errout;
+    if (!pgpid) {
+        pgpid = fork();
+        atexit(kill_pgpid);
+        if (!pgpid) {
+            execl("/usr/local/pgsql/bin/postgres", "/usr/local/pgsql/bin/postgres", "-D", "/tmp/testdb", "-c", "log_min_messages=DEBUG5", (char *)NULL);
+        }
+    }
 
     ctx->pq = dlopen("/usr/local/pgsql/lib/libpq.so", RTLD_NOW | RTLD_LOCAL);
     if (!ctx->pq)
-        goto errout;
-    if (pthread_create(&ctx->backend_runner, NULL, stage17_pg_launch, ctx))
-        goto errout;
-    pthread_cond_wait(&ctx->launch_cond, &ctx->launch_mutex);
-    pthread_cond_destroy(&ctx->launch_cond);
-    pthread_mutex_destroy(&ctx->launch_mutex);
-
-    if (ctx->launch_ec == 1)
         goto errout;
 
     return ctx;
