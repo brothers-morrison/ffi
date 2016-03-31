@@ -6,7 +6,7 @@
 PG_MODULE_MAGIC;
 #endif
 
-extern const char *stage19_dblep(const char *foo);
+extern void blep_(char *foo, char *bar, int foolen, int barlen);
 
 #ifndef DEBUG_BUILD
 
@@ -23,7 +23,7 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
     memcpy(cfoo, VARDATA(foo), foolen);
     cfoo[foolen] = '\0';
 
-    rv = stage19_dblep(cfoo);
+    rv = blep_(cfoo);
 
     size_t rvlen = strlen(rv);
     int32 rvsize = rvlen + VARHDRSZ;
@@ -35,8 +35,11 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
 
 #endif//DEBUG_BUILD
 
-int c_main(void) {
-    const char *bar = stage19_dblep("test");
+int main(void) {
+    char foo[128] = {0}, bar[128] = {0};
+    strcpy(foo, "test");
+    blep_(foo, bar, sizeof(foo), sizeof(bar));
     printf("[from C] Result: %s\n", bar);
+    return 0;
 }
 
