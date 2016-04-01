@@ -1,23 +1,8 @@
-SUBROUTINE Blep ( foo, bar, barlen )
+SUBROUTINE Blep ( foo, bar )
   USE iso_c_binding
   IMPLICIT NONE
   CHARACTER*(*), INTENT(IN) :: foo
-  TYPE(c_ptr), INTENT(OUT) :: bar
-  INTEGER(c_int), INTENT(OUT) :: barlen
-
-
-  INTERFACE
-    TYPE(c_ptr) FUNCTION cmmap(addr, len, prot, flags, fildes, off) BIND (c, name='mmap')
-      USE iso_c_binding, ONLY: c_int, c_size_t
-      IMPORT
-      INTEGER(c_int), VALUE :: addr
-      INTEGER(c_size_t), VALUE :: len
-      INTEGER(c_int), VALUE :: prot
-      INTEGER(c_int), VALUE :: flags
-      INTEGER(c_int), VALUE :: fildes
-      INTEGER(c_size_t), VALUE :: off
-    END FUNCTION cmmap
-  END INTERFACE 
+  CHARACTER(:), ALLOCATABLE, INTENT(OUT) :: bar
 
   INTEGER,PARAMETER :: PROT_READ=1
   INTEGER,PARAMETER :: MAP_PRIVATE=2
@@ -37,17 +22,13 @@ SUBROUTINE Blep ( foo, bar, barlen )
 
   ALLOCATE(CHARACTER(len=LEN(foo)+128) :: cmd)
   WRITE(cmd, 2342) foo, fname
-2342 FORMAT ('./stage20.sh "', A, '" > ', A)
+2342 FORMAT ('/home/jaseg/ffi/stage20.sh "', A, '" > ', A)
   CALL EXECUTE_COMMAND_LINE(cmd)
 
   CALL STAT(fname, stval, stout)
   flen = stval(8)
 
-  OPEN(unit=23, file=fname, status='old')
-  fd = FNUM(unit=23)
-  offx = 0
-  barlen = flen
-
-  bar = cmmap(0, flen, PROT_READ, MAP_PRIVATE, fd, offx)
-
+  ALLOCATE(CHARACTER(len=flen) :: bar)
+  OPEN(unit=23, file=fname, action='read', status='old')
+  READ(unit=23, fmt="(A)") bar
 END SUBROUTINE Blep

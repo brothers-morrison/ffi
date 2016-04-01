@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-extern void blep_(const char *foo, char **bar, int *barlen, int foolen);
+extern void blep_(const char *foo, char **bar, int foolen, int *barlen);
 
 #ifndef DEBUG_BUILD
 #include "postgres.h"
@@ -26,19 +26,17 @@ Datum stage19_blep(PG_FUNCTION_ARGS) {
     char *orv;
     int rvlen;
     //fprintf(stderr, "Stage 18.5: %s\n", cfoo);
-    blep_(cfoo, &orv, &rvlen, strlen(cfoo));
-    //char *crv = malloc(rvlen+1);
-    //strncpy(crv, rv, rvlen);
+    blep_(cfoo, &orv, strlen(cfoo), &rvlen);
     //crv[rvlen] = 0;
     //fprintf(stderr, "Return value [18.5]: %s\n", crv);
-    char *rv = malloc(128);
-    rvlen = snprintf(rv, 128, "rv: <%d | %p> %s", rvlen, orv, strndup(orv, rvlen));
+    //char *rv = malloc(128);
+    //rvlen = snprintf(rv, 128, "rv: <%d | %p> %s", rvlen, orv, strndup(orv, rvlen));
     munmap(orv, rvlen);
 
     int32 rvsize = rvlen + VARHDRSZ;
     text *prv = (text*)palloc(rvsize);
     SET_VARSIZE(prv, rvsize);
-    memcpy(VARDATA(prv), rv, rvlen);
+    memcpy(VARDATA(prv), orv, rvlen);
     PG_RETURN_TEXT_P(prv);
 }
 
@@ -48,11 +46,11 @@ int main(void) {
     const char *foo = "test";
     char *bar;
     int barlen;
-    blep_(foo, &bar, &barlen, strlen(foo));
+    blep_(foo, &bar, strlen(foo), &barlen);
     printf("fortran res: %p %zu\n", bar, barlen);
     char *out = strndup(bar, barlen);
     munmap(bar, barlen);
-    printf("[from C] Result (%d): %s\n", barlen, out);
+    printf("[from C] Result (%d): \"%s\"\n", barlen, bar);
     return 0;
 }
 
