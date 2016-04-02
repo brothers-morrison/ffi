@@ -5,8 +5,11 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load libstage19.so
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load libstage19.so libstage23.so
 
+
+libstage23.so: stage23.rs
+	rustc -g --crate-type dylib -o $@ $<
 
 stage18helper.o: stage18helper.c
 	gcc -g -c -fPIC -Ipostgresql/src/interfaces/libpq -Ipostgresql/src/include -o $@ $<

@@ -1,4 +1,5 @@
 Imports System
+Imports System.Text
 Imports System.Runtime.InteropServices
 Imports V8InterfaceThing
 
@@ -22,7 +23,8 @@ Public Class Stage7Runner
         JX_Evaluate("process.stage.blep;", "eval", func)
 
         JX_New(params)
-        JX_SetString(params, foo, Len(foo))
+        Dim utf8 As New UTF8Encoding(true)
+        JX_SetString(params, foo, utf8.GetByteCount(foo))
 
         JX_CallFunction(func, params, 1, jrv)
 
