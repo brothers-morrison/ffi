@@ -7,13 +7,13 @@ source ctypes.sh
 foo="$1"
 >&2 echo "Stage 20: $foo"
 
-dlopen ./libtcl8.6.so
+dlopen libtcl8.6.so
 
 dlcall Tcl_FindExecutable "string:$0"
 dlcall -n interp -r pointer Tcl_CreateInterp
 dlcall Tcl_Init $interp
 
-dlcall Tcl_EvalFile $interp "stage21.tcl"
+dlcall Tcl_EvalFile $interp "/home/jaseg/ffi/stage21.tcl"
 
 
 dlcall -n argbuf -r pointer malloc 16

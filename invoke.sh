@@ -25,4 +25,4 @@ ${debug} env LD_PRELOAD=/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server/l
             R_HOME=/usr/lib/R\
             LOGNAME=jaseg\
             USER=jaseg\
-            ${cmd} $@
+            ${cmd} "$@"
