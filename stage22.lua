@@ -1,3 +1,4 @@
+#!/usr/bin/env luajit
 
 local ffi = require("ffi")
 stage23 = ffi.load("/home/jaseg/ffi/libstage23.so")
