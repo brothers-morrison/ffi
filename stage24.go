@@ -1,3 +1,4 @@
+// package name: stage24
 package stage24
 
 import (
@@ -15,3 +16,5 @@ func stage24_blep(cfoo *C.char) *C.char {
     fmt.Println("Return value [24]: %v", bar);
     return C.CString(bar)
 }
+
+func main() {} // CGO FTW!
