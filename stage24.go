@@ -1,19 +1,20 @@
-// package name: stage24
-package stage24
+// package name: main
+package main
 
 import (
     "C"
     "fmt"
+    "os"
 )
 
 //export stage24_blep
 func stage24_blep(cfoo *C.char) *C.char {
     foo := C.GoString(cfoo)
-    fmt.Println("Stage 24: %v", foo);
+    fmt.Fprintln(os.Stderr, "Stage 24:", foo);
 
     bar := fmt.Sprintf("[Stage 24: %v]", foo);
 
-    fmt.Println("Return value [24]: %v", bar);
+    fmt.Fprintln(os.Stderr, "Return value [24]:", bar);
     return C.CString(bar)
 }
 

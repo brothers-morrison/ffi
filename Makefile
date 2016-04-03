@@ -5,13 +5,13 @@
 all: allstages
 
 .PHONY: allstages
-allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct stage18_load libstage19.so libstage23.so
+allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct libstage19.so libstage23.so stage18_load
 
 
-libstage24.a: stage24.go
+libstage24.so: stage24.go
 	go build -o $@ -buildmode c-shared $<
 
-libstage23.so: stage23.rs libstage24.a
+libstage23.so: stage23.rs libstage24.so
 	rustc -g --crate-type dylib -L. -o $@ $<
 
 stage18helper.o: stage18helper.c
@@ -132,7 +132,7 @@ sync:
 .PHONY: clean
 clean:
 	rm -f libStage2.so libstage3.so libstage8.5.so libstage11.so libstage12.so libstage13.so libstage14.so libstage16.5.so
-	rm -f libstage23.so libstage24.a
+	rm -f libstage23.so libstage24.so
 	rm -f Stage1.class Stage2.class Stage4.class
 	rm -f stage2 stage3 stage5 stage8.5 stage16.5
 	rm -f stage5.exe stage7.exe
