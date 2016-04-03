@@ -21,7 +21,7 @@ fi
 
 ${debug} env LD_PRELOAD=/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server/libjsig.so\
             PYTHONPATH=/home/jaseg/ffi\
-            LD_LIBRARY_PATH=.:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/home/jaseg/ffi:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/lib:/usr/local/lib/octave/4.0.1\
+            LD_LIBRARY_PATH=.:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server:/home/jaseg/ffi:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/lib:/usr/local/lib/octave/4.0.1:/home/jaseg/ffi:/home/jaseg/ffi/haskell-libs:/usr/lib/ghc\
             R_HOME=/usr/lib/R\
             LOGNAME=jaseg\
             USER=jaseg\

@@ -7,8 +7,11 @@ all: allstages
 .PHONY: allstages
 allstages: Stage1.class stage2 libStage2.so stage3 libstage3.so Stage4.class stage5 stage7.exe libstage8.5.so stage8.5 libstage11.so libstage16.5.so stage16.5 stage17_makecall.oct libstage19.so libstage23.so stage18_load
 
+libstage25.so: stage25.hs
+	# don't ask
+	sudo ghc --make -dynamic -shared -fPIC -o $@ $<
 
-libstage24.so: stage24.go
+libstage24.so: stage24.go libstage25.so
 	go build -o $@ -buildmode c-shared $<
 
 libstage23.so: stage23.rs libstage24.so

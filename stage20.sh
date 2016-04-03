@@ -3,7 +3,7 @@
 set -eu
 
 source ctypes.sh
-
+export LD_LIBRARY_PATH=/home/jaseg/ffi:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/lib:/home/jaseg/ffi:/home/jaseg/ffi/haskell-libs:/usr/lib/ghc
 foo="$1"
 >&2 echo "Stage 20: $foo"
 
