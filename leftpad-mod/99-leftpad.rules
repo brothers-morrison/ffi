@@ -1,0 +1,2 @@
+#Rules file for the leftpad device driver
+KERNEL=="leftpad", SUBSYSTEM=="ebb", MODE="0666"
