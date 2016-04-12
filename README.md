@@ -40,6 +40,7 @@ The "and some" being due to TIOBE Top 20 being a shitty index and lacked some of
 1. Go
 1. Haskell
  * Requires a metric fuckton of libraries spread everywhere, but when invoked with those, works.
+1. Linux kernel module via chardev
 
 ![Console output](screenshot.png)
 
