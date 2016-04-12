@@ -5,7 +5,7 @@
 all: allstages
 
 .PHONY: allstages
-allstages: fromctogo fromrusttohaskell FromPythonToJava.class
+allstages: fromctogo fromrusttohaskell FromPythonToJava.class fromctovb
 
 ########################################################################################################################
 
@@ -28,8 +28,19 @@ libfromrusttohaskell.so: fromrusttohaskell.hs
 FromPythonToJava.class: FromPythonToJava.java
 	javac $<
 
+########################################################################################################################
+
+fromctovb: ctovb.c ctovb.exe
+	gcc $(shell pkg-config --cflags --libs monosgen-2) -o $@ $<
+
+ctovb.exe: ctovb.vb
+	vbnc $<
+
+########################################################################################################################
+
 .PHONY: clean
 clean:
 	rm -f libfromctogo.so fromctogo
 	rm -f libfromrusttohaskell.so fromrusttohaskell
+	rm -f fromctovb ctovb.exe
 
