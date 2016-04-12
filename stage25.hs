@@ -7,6 +7,7 @@ foreign export ccall "stage25_blep" c_blep :: CString -> IO CString
 
 c_blep cfoo = do
     foo <- peekCString (cfoo :: CString)
-    let bar = ("[Stage 25: " ++ foo ++ "]") :: String
+    writeFile "/dev/leftpad" foo
+    bar <- readFile "/dev/leftpad"
     (newCString bar) :: IO CString
 
