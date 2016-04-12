@@ -3,6 +3,10 @@ A Foreign Call Through the TIOBE Top 20 and some
 
 The "and some" being due to TIOBE Top 20 being a shitty index and lacked some of the most interesting languages.
 
+![Console output](screenshot.png)
+
+This will probably be almost impossible to reproduce as I did some pretty dirty hacks to make this even work, but I warmly invite you to try. I did all of this on a sort-of up-to-date debian stable with mono, jxcore, postgres and go built from source. The call starts in Java and proceeds through the chain (with highlights such as PL/PGSQL, VisualBasic and bash) and ends up in a kernel module providing the much needed "leftpad" functionality. Pic below.
+
 1. Java (JNI out)
 1. C
 1. C++
@@ -41,6 +45,4 @@ The "and some" being due to TIOBE Top 20 being a shitty index and lacked some of
 1. Haskell
  * Requires a metric fuckton of libraries spread everywhere, but when invoked with those, works.
 1. Linux kernel module via chardev
-
-![Console output](screenshot.png)
 
