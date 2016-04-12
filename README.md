@@ -1,9 +1,9 @@
 
 
-1. Java, JNI out
+1. Java (JNI out)
 1. C
 1. C++
-1. Java, JNI in, JNA out
+1. Java (JNI in, JNA out)
 1. C#
 1. Python
 1. Visual Basic
