@@ -5,7 +5,14 @@ The "and some" being due to TIOBE Top 20 being a shitty index and lacked some of
 
 ![Console output](screenshot.png)
 
-This will probably be almost impossible to reproduce as I did some pretty dirty hacks to make this even work, but I warmly invite you to try. I did all of this on a sort-of up-to-date debian stable with mono, jxcore, postgres and go built from source. The call starts in Java and proceeds through the chain (with highlights such as PL/PGSQL, VisualBasic and bash) and ends up in a kernel module providing the much needed "leftpad" functionality. Pic below.
+The call starts in Java and proceeds through the chain (with highlights such as PL/PGSQL, VisualBasic and bash) and ends up in a kernel module providing the much needed "leftpad" functionality.
+
+This will probably be almost impossible to reproduce as I did some pretty dirty hacks to make this even work, but I warmly invite you to try. I did all of this on a sort-of up-to-date debian stable with mono, jxcore, postgres and go built from source. I can send you a copy of the ~10GB debian VM image I used to develop this, just ```/query``` me on freenode.
+
+--jaseg
+
+Complete list of languages involved
+-----------------------------------
 
 1. Java (JNI out)
 1. C
